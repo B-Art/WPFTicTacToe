@@ -29,6 +29,16 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework, WindowsBase, Sys
 </Window>
 "@
 
+# Function Get Random color array
+function Get-RandomColor {
+    param (
+        [string]$colorFilter = '*light*blue*'
+    )
+    [System.Windows.Media.Brushes].GetProperties().Name.Where{
+            $_ -like $colorFilter
+        } | Get-Random
+} 
+
 # Function to check for victory
 function Test-Victory() {
     [CmdletBinding()]
@@ -75,18 +85,8 @@ function Button_Click {
         $e.source.Content = $board.Value[$index]
         Write-Host ($e.source.Color)
         $e.source.Background = @{
-                "X" = 
-                (0..8).ForEach{
-                    [System.Windows.Media.Brushes].GetProperties().Name.Where{
-                        $_ -like '*Light*Red*'
-                    } | get-random
-                };
-                "O" = 
-                (0..8).ForEach{
-                    [System.Windows.Media.Brushes].GetProperties().Name.Where{
-                        $_ -like '*Light*Green*'
-                    } | get-random
-                } 
+            "X" = Get-RandomColor -colorFilter '*Red*';
+            "O" = Get-RandomColor -colorFilter '*Light*Green*'
         }[$currentPlayer.Value]
         if (Test-Victory $currentPlayer.Value $board) {
             [System.Windows.MessageBox]::Show("Player $($currentPlayer.Value) wins!", "Game Over")
@@ -98,13 +98,12 @@ function Button_Click {
         $currentPlayer.Value = if ($currentPlayer.Value -eq 'X') { 'O' } else { 'X' }
         If ($gameOver.Value) {
             $gameOver.Value = $false
-            $boardcolors = [System.Windows.Media.Brushes].GetProperties().Name.Where{ $_ -like '*Light*Blue*' } | Get-Random -Count 9   
             for ($i = 0; $i -lt 9; $i++) {
                 $button = $window.FindName("Button" + $i.ToString("00"))
                 $button.Content, $board.Value[$i] = ' ', ' '
                 # [Enum]::GetValues([System.ConsoleColor])
                 # [System.Windows.Media.Brushes].GetProperties().Name
-                $button.Background = $boardcolors[$i]
+                $button.Background = Get-ColorArray -colorFilter '*light*blue*'
             }
         }
     }
@@ -115,11 +114,6 @@ $window = [Windows.Markup.XamlReader]::Load($reader)
 
 # Initialize game state
 $board = @(, ' ' * 9)
-$boardcolors = (0..2).Foreach{
-    ([System.Windows.Media.Brushes].GetProperties().Name.Where{
-        $_ -like '*light*blue*'
-    } | Get-Random -Count 9)
-}   
 $currentPlayer = 'X'
 $gameOver = $false
 
@@ -128,7 +122,7 @@ for ($i = 0; $i -lt 9; $i++) {
     $button = $window.FindName("Button" + $i.ToString("00"))
     $button.Add_Click({ Button_Click $_ ([ref]$board) ([ref]$currentPlayer) ([ref]$gameOver) })
     # [System.Windows.Media.Brushes].GetProperties().Name
-    $button.Background = $boardcolors[$i]
+    $button.Background = Get-ColorArray -colorFilter '*light*blue*'
 }
 
 # Show the window
