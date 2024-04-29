@@ -76,9 +76,17 @@ function Button_Click {
         Write-Host ($e.source.Color)
         $e.source.Background = @{
                 "X" = 
-                [System.Windows.Media.Brushes].GetProperties().Name.Where{ $_ -like '*Light*Red*' } | get-random;
+                (0..8).ForEach{
+                    [System.Windows.Media.Brushes].GetProperties().Name.Where{
+                        $_ -like '*Light*Red*'
+                    } | get-random
+                };
                 "O" = 
-                [System.Windows.Media.Brushes].GetProperties().Name.Where{ $_ -like '*Light*Green*' } | get-random 
+                (0..8).ForEach{
+                    [System.Windows.Media.Brushes].GetProperties().Name.Where{
+                        $_ -like '*Light*Green*'
+                    } | get-random
+                } 
         }[$currentPlayer.Value]
         if (Test-Victory $currentPlayer.Value $board) {
             [System.Windows.MessageBox]::Show("Player $($currentPlayer.Value) wins!", "Game Over")
