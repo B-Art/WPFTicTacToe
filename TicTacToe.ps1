@@ -107,7 +107,11 @@ $window = [Windows.Markup.XamlReader]::Load($reader)
 
 # Initialize game state
 $board = @(, ' ' * 9)
-$boardcolors = [System.Windows.Media.Brushes].GetProperties().Name.Where{ $_ -like '*Ligth*Blue*' } | Get-Random -Count 9   
+$boardcolors = (0..2).Foreach{
+    ([System.Windows.Media.Brushes].GetProperties().Name.Where{
+        $_ -like '*light*blue*'
+    } | Get-Random -Count 9)
+}   
 $currentPlayer = 'X'
 $gameOver = $false
 
