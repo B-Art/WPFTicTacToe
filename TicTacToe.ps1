@@ -103,7 +103,7 @@ function Button_Click {
                 $button.Content, $board.Value[$i] = ' ', ' '
                 # [Enum]::GetValues([System.ConsoleColor])
                 # [System.Windows.Media.Brushes].GetProperties().Name
-                $button.Background = Get-ColorArray -colorFilter '*light*blue*'
+                $button.Background = Get-RandomColor -colorFilter '*light*blue*'
             }
         }
     }
@@ -122,7 +122,7 @@ for ($i = 0; $i -lt 9; $i++) {
     $button = $window.FindName("Button" + $i.ToString("00"))
     $button.Add_Click({ Button_Click $_ ([ref]$board) ([ref]$currentPlayer) ([ref]$gameOver) })
     # [System.Windows.Media.Brushes].GetProperties().Name
-    $button.Background = Get-ColorArray -colorFilter '*light*blue*'
+    $button.Background = Get-RandomColor -colorFilter '*light*blue*'
 }
 
 # Show the window
